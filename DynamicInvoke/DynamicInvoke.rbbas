@@ -79,7 +79,7 @@ Protected Module DynamicInvoke
 		  Dim ValueType As Integer = VarType(DataValue)
 		  Select Case ValueType
 		    
-		  Case Variant.TypeNil ' Sometimes Nil is an error; sometimes not
+		  Case Variant.TypeNil
 		    Return Nil
 		    
 		  Case Variant.TypeBoolean
