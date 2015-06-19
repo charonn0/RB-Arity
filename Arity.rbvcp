@@ -6,6 +6,7 @@ Window=Window1;Window1.rbfrm;&h436E2FFF;&h0;false
 MenuBar=MenuBar1;MenuBar1.rbmnu;&h1F8BDFFF;&h0;false
 BuildSteps=Build Automation;Build Automation.rbbas;&h771717FF;&h0;false
 Module=DynamicInvoke;DynamicInvoke/DynamicInvoke.rbbas;&h6A88D7FF;&h0;false
+Class=TooManyArgumentsException;DynamicInvoke/TooManyArgumentsException.rbbas;&h2E3257FF;&h6A88D7FF;false
 Class=Invoker;DynamicInvoke/Invoker.rbbas;&h131AAFFF;&h6A88D7FF;false
 DefaultWindow=Window1
 AppMenuBar=MenuBar1
