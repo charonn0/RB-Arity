@@ -57,21 +57,27 @@ Protected Module DynamicInvoke
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h1
+		Protected Function GetProcAddress(LibName As String, Ordinal As Integer) As DynamicInvoke.Invoker
+		  Dim hModule As Integer = LoadLibraryW(LibName)
+		  If hModule = 0 Then Return Nil
+		  Dim proc As Ptr = _GetProcAddress(hModule, Ptr(Ordinal))
+		  If proc <> Nil Then Return New DynamicInvoke.Invoker(proc)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function GetProcAddress(LibName As String, ProcName As String) As DynamicInvoke.Invoker
-		  Dim libmb, procmb As MemoryBlock
-		  libmb = New MemoryBlock(LibName.Len + 1)
-		  libmb.CString(0) = LibName
-		  procmb = New MemoryBlock(ProcName.Len + 1)
-		  procmb.CString(0) = ProcName
-		  Dim hmod As Integer = LoadLibraryA(libmb)
-		  If hmod = 0 Then Return Nil
-		  Dim proc As Ptr = _GetProcAddress(hmod, procmb)
+		  Dim hModule As Integer = LoadLibraryW(LibName)
+		  If hModule = 0 Then Return Nil
+		  Dim procn As New MemoryBlock(ProcName.Len + 1)
+		  procn.CString(0) = ProcName
+		  Dim proc As Ptr = _GetProcAddress(hModule, Procn)
 		  If proc <> Nil Then Return New DynamicInvoke.Invoker(proc)
 		End Function
 	#tag EndMethod
 
 	#tag ExternalMethod, Flags = &h21
-		Private Declare Function LoadLibraryA Lib "Kernel32" (LibName As Ptr) As Integer
+		Private Soft Declare Function LoadLibraryW Lib "Kernel32" (LibName As WString) As Integer
 	#tag EndExternalMethod
 
 	#tag Method, Flags = &h21
@@ -109,7 +115,7 @@ Protected Module DynamicInvoke
 	#tag EndMethod
 
 	#tag ExternalMethod, Flags = &h21
-		Private Declare Function _GetProcAddress Lib "Kernel32" Alias "GetProcAddress" (hModule As Integer, ProcName As Ptr) As Ptr
+		Private Soft Declare Function _GetProcAddress Lib "Kernel32" Alias "GetProcAddress" (hModule As Integer, ProcName As Ptr) As Ptr
 	#tag EndExternalMethod
 
 
