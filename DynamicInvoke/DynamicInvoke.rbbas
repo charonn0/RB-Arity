@@ -56,23 +56,31 @@ Protected Module DynamicInvoke
 		Private Delegate Sub ArityS6(Argument1 As Ptr, Argument2 As Ptr, Argument3 As Ptr, Argument4 As Ptr, Argument5 As Ptr, Argument6 As Ptr)
 	#tag EndDelegateDeclaration
 
+	#tag ExternalMethod, Flags = &h21
+		Private Soft Declare Function FreeLibrary Lib "Kernel32" (hModule As Integer) As Boolean
+	#tag EndExternalMethod
+
+	#tag ExternalMethod, Flags = &h21
+		Private Soft Declare Function GetModuleHandleW Lib "Kernel32" (LibName As WString) As Integer
+	#tag EndExternalMethod
+
 	#tag Method, Flags = &h1
 		Protected Function GetProcAddress(LibName As String, Ordinal As Integer) As DynamicInvoke.Invoker
-		  Dim hModule As Integer = LoadLibrary(LibName)
-		  If hModule = 0 Then Return Nil
-		  Dim proc As Ptr = GetProcAddress_(hModule, Ptr(Ordinal))
-		  If proc <> Nil Then Return New DynamicInvoke.Invoker(proc)
+		  Dim hModule As Library = Library.LoadLibrary(LibName)
+		  If hModule = Nil Then Return Nil
+		  Dim proc As Ptr = GetProcAddress_(hModule.ModuleID, Ptr(Ordinal))
+		  If proc <> Nil Then Return New DynamicInvoke.Invoker(proc, Str(Ordinal), hModule)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function GetProcAddress(LibName As String, ProcName As String) As DynamicInvoke.Invoker
-		  Dim hModule As Integer = LoadLibrary(LibName)
-		  If hModule = 0 Then Return Nil
+		  Dim hModule As Library = Library.LoadLibrary(LibName)
+		  If hModule = Nil Then Return Nil
 		  Dim procn As New MemoryBlock(ProcName.Len + 1)
 		  procn.CString(0) = ProcName
-		  Dim proc As Ptr = GetProcAddress_(hModule, Procn)
-		  If proc <> Nil Then Return New DynamicInvoke.Invoker(proc)
+		  Dim proc As Ptr = GetProcAddress_(hModule.ModuleID, Procn)
+		  If proc <> Nil Then Return New DynamicInvoke.Invoker(proc, ProcName, hModule)
 		End Function
 	#tag EndMethod
 
@@ -80,60 +88,21 @@ Protected Module DynamicInvoke
 		Private Soft Declare Function GetProcAddress_ Lib "Kernel32" Alias "GetProcAddress" (hModule As Integer, ProcName As Ptr) As Ptr
 	#tag EndExternalMethod
 
-	#tag Method, Flags = &h21
-		Private Function LoadLibrary(LibName As String) As Integer
-		  If Modules = Nil Then Modules = New Dictionary
-		  Dim hmod As Integer = Modules.Lookup(LibName, 0)
-		  If hmod = 0 Then
-		    hmod = LoadLibraryW(LibName)
-		    If hmod <> 0 Then Modules.Value(LibName) = hmod
-		  End If
-		  Return hmod
+	#tag Method, Flags = &h1
+		Protected Function IsFunctionAvailable(LibName As String, ProcName As String) As Boolean
+		  Return GetProcAddress(LibName, ProcName) <> Nil
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IsOrdinalAvailable(LibName As String, Ordinal As Integer) As Boolean
+		  Return GetProcAddress(LibName, Ordinal) <> Nil
 		End Function
 	#tag EndMethod
 
 	#tag ExternalMethod, Flags = &h21
 		Private Soft Declare Function LoadLibraryW Lib "Kernel32" (LibName As WString) As Integer
 	#tag EndExternalMethod
-
-	#tag Method, Flags = &h21
-		Private Function MarshalToPtr(DataValue As Variant) As Ptr
-		  Dim ValueType As Integer = VarType(DataValue)
-		  Select Case ValueType
-		    
-		  Case Variant.TypeNil
-		    Return Nil
-		    
-		  Case Variant.TypeBoolean
-		    If DataValue.BooleanValue Then
-		      Return MarshalToPtr(1)
-		    Else
-		      Return MarshalToPtr(0)
-		    End If
-		    
-		  Case Variant.TypePtr, Variant.TypeInteger
-		    Return DataValue.PtrValue
-		    
-		  Case Variant.TypeWString, Variant.TypeCString
-		    Return DataValue.PtrValue
-		    
-		  Case Variant.TypeObject
-		    Select Case DataValue
-		    Case IsA MemoryBlock
-		      Return DataValue.PtrValue
-		    Else
-		      Raise New UnsupportedFormatException
-		    End Select
-		  Else
-		    Raise New UnsupportedFormatException
-		  End Select
-		End Function
-	#tag EndMethod
-
-
-	#tag Property, Flags = &h21
-		Private Modules As Dictionary
-	#tag EndProperty
 
 
 	#tag ViewBehavior
