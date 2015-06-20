@@ -7,12 +7,34 @@ Private Class Library
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function File() As FolderItem
+		  Dim path As New MemoryBlock(1024)
+		  Dim sz As Integer = GetModuleFileNameW(hModule, path, path.Size)
+		  If sz > 0 Then Return GetFolderItem(path.WString(0), FolderItem.PathTypeAbsolute)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		 Shared Function FreeLibrary(LibName As String) As Boolean
+		  If Modules = Nil Then Modules = New Dictionary
+		  If Modules.HasKey(LibName) And FreeLibrary(LibName) Then
+		    Modules.Remove(LibName)
+		    Return True
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		 Shared Function LoadLibrary(LibName As String) As Library
 		  If Modules = Nil Then Modules = New Dictionary
-		  Dim h As Integer = LoadLibraryW(LibName)
+		  If Modules.HasKey(LibName) Then Return Modules.Value(LibName)
+		  Dim h As Integer = GetModuleHandleW(LibName)
+		  Dim hMod As Library
+		  If h = 0 Then h = LoadLibraryW(LibName)
 		  If h = 0 Then Return Nil
-		  Modules.Value(LibName) = h
-		  Return New Library(h)
+		  hMod = New Library(h)
+		  Modules.Value(LibName) = hMod
+		  Return hMod
 		End Function
 	#tag EndMethod
 
@@ -24,9 +46,8 @@ Private Class Library
 
 	#tag Method, Flags = &h0
 		Function Name() As String
-		  For Each hmod As String In Modules.Keys
-		    If Modules.Value(hmod) = hModule Then Return hmod
-		  Next
+		  Dim f As FolderItem = Me.File
+		  If f <> Nil Then Return f.Name
 		End Function
 	#tag EndMethod
 

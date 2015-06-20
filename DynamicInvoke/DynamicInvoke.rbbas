@@ -61,6 +61,10 @@ Protected Module DynamicInvoke
 	#tag EndExternalMethod
 
 	#tag ExternalMethod, Flags = &h21
+		Private Soft Declare Function GetModuleFileNameW Lib "Kernel32" (hModule As Integer, Filename As Ptr, Size As Integer) As Integer
+	#tag EndExternalMethod
+
+	#tag ExternalMethod, Flags = &h21
 		Private Soft Declare Function GetModuleHandleW Lib "Kernel32" (LibName As WString) As Integer
 	#tag EndExternalMethod
 
