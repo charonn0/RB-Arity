@@ -70,21 +70,37 @@ Protected Module DynamicInvoke
 
 	#tag Method, Flags = &h1
 		Protected Function GetProcAddress(LibName As String, Ordinal As Integer) As DynamicInvoke.Invoker
-		  Dim hModule As Library = Library.LoadLibrary(LibName)
-		  If hModule = Nil Then Return Nil
-		  Dim proc As Ptr = GetProcAddress_(hModule.ModuleID, Ptr(Ordinal))
-		  If proc <> Nil Then Return New DynamicInvoke.Invoker(proc, Str(Ordinal), hModule)
+		  If Procedures = Nil Then Procedures = New Dictionary
+		  Dim Procedure As DynamicInvoke.Invoker = Procedures.Lookup(LibName + Str(Ordinal), Nil)
+		  If Procedure = Nil Then
+		    Dim hModule As DynamicInvoke.Library = Library.LoadLibrary(LibName)
+		    If hModule = Nil Then Return Nil
+		    Dim proc As Ptr = GetProcAddress_(hModule.ModuleID, Ptr(Ordinal))
+		    If proc <> Nil Then 
+		      Procedure = New DynamicInvoke.Invoker(proc, Str(Ordinal), hModule)
+		      Procedures.Value(LibName + Str(Ordinal)) = Procedure
+		    End If
+		  End If
+		  Return Procedure
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function GetProcAddress(LibName As String, ProcName As String) As DynamicInvoke.Invoker
-		  Dim hModule As Library = Library.LoadLibrary(LibName)
-		  If hModule = Nil Then Return Nil
-		  Dim procn As New MemoryBlock(ProcName.Len + 1)
-		  procn.CString(0) = ProcName
-		  Dim proc As Ptr = GetProcAddress_(hModule.ModuleID, Procn)
-		  If proc <> Nil Then Return New DynamicInvoke.Invoker(proc, ProcName, hModule)
+		  If Procedures = Nil Then Procedures = New Dictionary
+		  Dim Procedure As DynamicInvoke.Invoker = Procedures.Lookup(LibName + ProcName, Nil)
+		  If Procedure = Nil Then
+		    Dim hModule As DynamicInvoke.Library = Library.LoadLibrary(LibName)
+		    If hModule = Nil Then Return Nil
+		    Dim procn As New MemoryBlock(ProcName.Len + 1)
+		    procn.CString(0) = ProcName
+		    Dim proc As Ptr = GetProcAddress_(hModule.ModuleID, Procn)
+		    If proc <> Nil Then
+		      Procedure = New DynamicInvoke.Invoker(proc, ProcName, hModule)
+		      Procedures.Value(LibName + ProcName) = Procedure
+		    End If
+		  End If
+		  Return Procedure
 		End Function
 	#tag EndMethod
 
@@ -107,6 +123,11 @@ Protected Module DynamicInvoke
 	#tag ExternalMethod, Flags = &h21
 		Private Soft Declare Function LoadLibraryW Lib "Kernel32" (LibName As WString) As Integer
 	#tag EndExternalMethod
+
+
+	#tag Property, Flags = &h21
+		Private Procedures As Dictionary
+	#tag EndProperty
 
 
 	#tag ViewBehavior

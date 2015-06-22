@@ -1,5 +1,5 @@
 #tag Class
-Private Class Library
+Protected Class Library
 	#tag Method, Flags = &h1
 		Protected Sub Constructor(hMod As Integer)
 		  hModule = hMod
@@ -25,11 +25,11 @@ Private Class Library
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		 Shared Function LoadLibrary(LibName As String) As Library
+		 Shared Function LoadLibrary(LibName As String) As DynamicInvoke.Library
 		  If Modules = Nil Then Modules = New Dictionary
 		  If Modules.HasKey(LibName) Then Return Modules.Value(LibName)
 		  Dim h As Integer = GetModuleHandleW(LibName)
-		  Dim hMod As Library
+		  Dim hMod As DynamicInvoke.Library
 		  If h = 0 Then h = LoadLibraryW(LibName)
 		  If h = 0 Then Return Nil
 		  hMod = New Library(h)
@@ -51,6 +51,13 @@ Private Class Library
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Operator_Compare(OtherLib As DynamicInvoke.Library) As Integer
+		  If OtherLib Is Nil Then Return 1
+		  Return Sign(Me.hModule - OtherLib.hModule)
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h1
 		Protected hModule As Integer
@@ -61,5 +68,40 @@ Private Class Library
 	#tag EndProperty
 
 
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			InheritedFrom="Object"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			InheritedFrom="Object"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InheritedFrom="Object"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InheritedFrom="Object"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			InheritedFrom="Object"
+		#tag EndViewProperty
+	#tag EndViewBehavior
 End Class
 #tag EndClass

@@ -15,7 +15,7 @@ Protected Class Invoker
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Proc As Ptr, ProcName As String, LibModule As Library)
+		Sub Constructor(Proc As Ptr, ProcName As String, LibModule As DynamicInvoke.Library)
 		  Procedure = Proc
 		  hModule = LibModule
 		  mName = ProcName
@@ -26,9 +26,9 @@ Protected Class Invoker
 		Sub Invoke(ParamArray Args() As Variant)
 		  Dim pArgs() As Ptr
 		  For i As Integer = 0 To UBound(Args)
-		    Dim t As Integer = -1
-		    If UBound(mArgTypes) >= i Then t = mArgTypes(i)
-		    pArgs.Append(MarshalToPtr(Args(i)))
+		    Dim type As Integer = -1
+		    If i <= UBound(mArgTypes) Then type = mArgTypes(i)
+		    pArgs.Append(MarshalToPtr(Args(i), type))
 		  Next
 		  Select Case UBound(Args)
 		  Case -1
@@ -68,7 +68,9 @@ Protected Class Invoker
 		Function Invoke(ParamArray Args() As Variant) As Variant
 		  Dim pArgs() As Ptr
 		  For i As Integer = 0 To UBound(Args)
-		    pArgs.Append(MarshalToPtr(Args(i)))
+		    Dim type As Integer = -1
+		    If i <= UBound(mArgTypes) Then type = mArgTypes(i)
+		    pArgs.Append(MarshalToPtr(Args(i), type))
 		  Next
 		  Select Case UBound(Args)
 		  Case -1
@@ -112,7 +114,7 @@ Protected Class Invoker
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function MarshalToPtr(DataValue As Variant, ValueType As Integer = -1) As Ptr
+		Private Shared Function MarshalToPtr(DataValue As Variant, ValueType As Integer = - 1) As Ptr
 		  If ValueType = -1 Then ValueType = VarType(DataValue)
 		  Select Case ValueType
 		    
@@ -132,6 +134,15 @@ Protected Class Invoker
 		  Case Variant.TypeWString, Variant.TypeCString
 		    Return DataValue.PtrValue
 		    
+		  Case Variant.TypeString
+		    If DataValue.StringValue.Encoding = Encodings.ASCII Then
+		      Dim s As CString = DataValue.StringValue
+		      Return MarshalToPtr(s)
+		    Else
+		      Dim s As WString = DataValue.WStringValue
+		      Return MarshalToPtr(s)
+		    End If
+		    
 		  Case Variant.TypeObject
 		    Select Case DataValue
 		    Case IsA MemoryBlock
@@ -146,14 +157,28 @@ Protected Class Invoker
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Name() As String
+		Function Operator_Compare(OtherInvoker As DynamicInvoke.Invoker) As Integer
+		  If OtherInvoker Is Nil Then Return 1
+		  If Me.hModule <> OtherInvoker.hModule Then Return 1
+		  Return Sign(Integer(Procedure) - Integer(OtherInvoker.Procedure))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Convert() As Ptr
+		  Return Procedure
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ProcedureName() As String
 		  Return mName
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h1
-		Protected hModule As Library
+		Protected hModule As DynamicInvoke.Library
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
