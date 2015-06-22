@@ -70,13 +70,16 @@ Protected Module DynamicInvoke
 
 	#tag Method, Flags = &h1
 		Protected Function GetProcAddress(LibName As String, Ordinal As Integer) As DynamicInvoke.Invoker
+		  #If Not TargetWin32 Then
+		    Raise New PlatformNotSupportedException
+		  #endif
 		  If Procedures = Nil Then Procedures = New Dictionary
 		  Dim Procedure As DynamicInvoke.Invoker = Procedures.Lookup(LibName + Str(Ordinal), Nil)
 		  If Procedure = Nil Then
 		    Dim hModule As DynamicInvoke.Library = Library.LoadLibrary(LibName)
 		    If hModule = Nil Then Return Nil
 		    Dim proc As Ptr = GetProcAddress_(hModule.ModuleID, Ptr(Ordinal))
-		    If proc <> Nil Then 
+		    If proc <> Nil Then
 		      Procedure = New DynamicInvoke.Invoker(proc, Str(Ordinal), hModule)
 		      Procedures.Value(LibName + Str(Ordinal)) = Procedure
 		    End If
@@ -87,6 +90,9 @@ Protected Module DynamicInvoke
 
 	#tag Method, Flags = &h1
 		Protected Function GetProcAddress(LibName As String, ProcName As String) As DynamicInvoke.Invoker
+		  #If Not TargetWin32 Then
+		    Raise New PlatformNotSupportedException
+		  #endif
 		  If Procedures = Nil Then Procedures = New Dictionary
 		  Dim Procedure As DynamicInvoke.Invoker = Procedures.Lookup(LibName + ProcName, Nil)
 		  If Procedure = Nil Then

@@ -8,6 +8,9 @@ Protected Class Library
 
 	#tag Method, Flags = &h0
 		Function File() As FolderItem
+		  #If Not TargetWin32 Then
+		    Raise New PlatformNotSupportedException
+		  #endif
 		  Dim path As New MemoryBlock(1024)
 		  Dim sz As Integer = GetModuleFileNameW(hModule, path, path.Size)
 		  If sz > 0 Then Return GetFolderItem(path.WString(0), FolderItem.PathTypeAbsolute)
@@ -16,6 +19,9 @@ Protected Class Library
 
 	#tag Method, Flags = &h0
 		 Shared Function FreeLibrary(LibName As String) As Boolean
+		  #If Not TargetWin32 Then
+		    Raise New PlatformNotSupportedException
+		  #endif
 		  If Modules = Nil Then Modules = New Dictionary
 		  If Modules.HasKey(LibName) And FreeLibrary(LibName) Then
 		    Modules.Remove(LibName)
@@ -26,6 +32,9 @@ Protected Class Library
 
 	#tag Method, Flags = &h0
 		 Shared Function LoadLibrary(LibName As String) As DynamicInvoke.Library
+		  #If Not TargetWin32 Then
+		    Raise New PlatformNotSupportedException
+		  #endif
 		  If Modules = Nil Then Modules = New Dictionary
 		  If Modules.HasKey(LibName) Then Return Modules.Value(LibName)
 		  Dim h As Integer = GetModuleHandleW(LibName)
