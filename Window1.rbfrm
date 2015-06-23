@@ -96,7 +96,7 @@ End
 	#tag Event
 		Sub Action()
 		  Dim proc As DynamicInvoke.Invoker = DynamicInvoke.GetProcAddress("User32", "MessageBoxW")
-		  Dim txt As WString = proc.Name
+		  Dim txt As WString = proc.ProcedureName
 		  Dim caption As WString = proc.Library
 		  Const MB_ICONINFORMATION  = &h00000040
 		  Dim value As Integer = proc.Invoke(Self.Handle, txt, caption, MB_ICONINFORMATION)
