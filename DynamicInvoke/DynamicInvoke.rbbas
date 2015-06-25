@@ -130,6 +130,49 @@ Protected Module DynamicInvoke
 		Private Soft Declare Function LoadLibraryW Lib "Kernel32" (LibName As WString) As Integer
 	#tag EndExternalMethod
 
+	#tag Method, Flags = &h21
+		Private Function MarshalToPtr(DataValue As Variant, ValueType As Integer = - 1) As Ptr
+		  If ValueType = -1 Then ValueType = VarType(DataValue)
+		  Select Case ValueType
+		    
+		  Case Variant.TypeNil
+		    Return Nil
+		    
+		  Case Variant.TypeBoolean
+		    If DataValue.BooleanValue Then
+		      Return MarshalToPtr(1)
+		    Else
+		      Return MarshalToPtr(0)
+		    End If
+		    
+		  Case Variant.TypePtr, Variant.TypeInteger
+		    Return DataValue.PtrValue
+		    
+		  Case Variant.TypeWString, Variant.TypeCString
+		    Return DataValue.PtrValue
+		    
+		  Case Variant.TypeString
+		    If DataValue.StringValue.Encoding = Encodings.ASCII Then
+		      Dim s As CString = DataValue.StringValue
+		      Return MarshalToPtr(s)
+		    Else
+		      Dim s As WString = DataValue.WStringValue
+		      Return MarshalToPtr(s)
+		    End If
+		    
+		  Case Variant.TypeObject
+		    Select Case DataValue
+		    Case IsA MemoryBlock
+		      Return DataValue.PtrValue
+		    Else
+		      Raise New UnsupportedFormatException
+		    End Select
+		  Else
+		    Raise New UnsupportedFormatException
+		  End Select
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private Procedures As Dictionary
