@@ -90,16 +90,43 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  'If DynamicInvoke.IsFunctionAvailable("libcurl", "curl_global_init") Then
+		  'Dim GetLastError As DynamicInvoke.Invoker = DynamicInvoke.GetProcAddress("Kernel32", "GetLastError")
+		  'Dim err As Integer
+		  'If DynamicInvoke.IsOrdinalAvailable("libcurl", 21) Then
+		  'Dim curl_global_init As DynamicInvoke.Invoker = DynamicInvoke.GetProcAddress("libcurl", 21)
+		  'curl_global_init.Invoke(3)
+		  'Break
+		  '
+		  'End If
+		  'err = GetLastError.Invoke()
+		  'Break
+		  'End If
+		  'Break
+		End Sub
+	#tag EndEvent
+
+
 #tag EndWindowCode
 
 #tag Events PushButton1
 	#tag Event
 		Sub Action()
-		  Dim proc As DynamicInvoke.Invoker = DynamicInvoke.GetProcAddress("User32", "MessageBoxW")
-		  Dim txt As WString = proc.ProcedureName
-		  Dim caption As WString = proc.Library
+		  Dim MessageBox As DynamicInvoke.Invoker = DynamicInvoke.GetProcAddress("User32", "MessageBoxW")
 		  Const MB_ICONINFORMATION  = &h00000040
-		  Dim value As Integer = proc.Invoke(Self.Handle, txt, caption, MB_ICONINFORMATION)
+		  Const MB_RETRYCANCEL = &h00000005
+		  
+		  Dim s1 As String = ConvertEncoding(MessageBox.ProcedureName, Encodings.UTF16)
+		  Dim s2 As String = ConvertEncoding(MessageBox.Library, Encodings.UTF16)
+		  
+		  Dim value As Integer = MessageBox.Invoke(Self.Handle, s1, s2, MB_ICONINFORMATION Or MB_RETRYCANCEL)
+		  If value = 4 Then
+		    MessageBox.Invoke(Self.Handle, "You clicked Retry!", "Retry!", MB_ICONINFORMATION)
+		  Else
+		    MessageBox.Invoke(Self.Handle, "You clicked Cancel!", "Cancel!", MB_ICONINFORMATION)
+		  End If
 		  
 		End Sub
 	#tag EndEvent
@@ -107,9 +134,9 @@ End
 #tag Events PushButton2
 	#tag Event
 		Sub Action()
-		  Dim proc As DynamicInvoke.Invoker = DynamicInvoke.GetProcAddress("User32", "SetWindowTextA")
-		  Dim caption As CString = "Hello, world!!"
-		  Dim value As Integer = proc.Invoke(Self.Handle, caption)
+		  Dim SetWindowText As DynamicInvoke.Invoker = DynamicInvoke.GetProcAddress("User32", "SetWindowTextA")
+		  Dim caption As CString = "Caption set!"
+		  SetWindowText.Invoke(Self.Handle, caption)
 		  
 		End Sub
 	#tag EndEvent
