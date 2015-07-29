@@ -22,8 +22,9 @@ Protected Class Library
 		  #If Not TargetWin32 Then
 		    Raise New PlatformNotSupportedException
 		  #endif
-		  If Modules = Nil Then Modules = New Dictionary
-		  If Modules.HasKey(LibName) And FreeLibrary(LibName) Then
+		  If Modules = Nil Then Return False
+		  Dim hModule As Integer = Modules.Lookup(LibName, 0)
+		  If hModule <> 0 And DynamicInvoke.FreeLibrary(hModule) Then
 		    Modules.Remove(LibName)
 		    Return True
 		  End If
