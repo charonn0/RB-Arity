@@ -1,8 +1,9 @@
 #tag Class
 Protected Class Library
 	#tag Method, Flags = &h1
-		Protected Sub Constructor(hMod As Integer)
+		Protected Sub Constructor(hMod As Integer, LibName As String)
 		  hModule = hMod
+		  mName = LibName
 		End Sub
 	#tag EndMethod
 
@@ -33,6 +34,7 @@ Protected Class Library
 
 	#tag Method, Flags = &h0
 		 Shared Function LoadLibrary(LibName As String) As DynamicInvoke.Library
+		  ' Returns a reference to the library. If the library cannot be loaded then this function returns Nil
 		  #If Not TargetWin32 Then
 		    Raise New PlatformNotSupportedException
 		  #endif
@@ -42,7 +44,7 @@ Protected Class Library
 		  Dim hMod As DynamicInvoke.Library
 		  If h = 0 Then h = LoadLibraryW(LibName)
 		  If h = 0 Then Return Nil
-		  hMod = New Library(h)
+		  hMod = New Library(h, LibName)
 		  Modules.Value(LibName) = hMod
 		  Return hMod
 		End Function
@@ -51,13 +53,6 @@ Protected Class Library
 	#tag Method, Flags = &h0
 		Function ModuleID() As Integer
 		  Return hModule
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Name() As String
-		  Dim f As FolderItem = Me.File
-		  If f <> Nil Then Return f.Name
 		End Function
 	#tag EndMethod
 
@@ -74,8 +69,23 @@ Protected Class Library
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mName As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private Shared Modules As Dictionary
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If mName <> "" Then Return mName
+			  Dim f As FolderItem = Me.File
+			  If f <> Nil Then Return f.Name
+			End Get
+		#tag EndGetter
+		Name As String
+	#tag EndComputedProperty
 
 
 	#tag ViewBehavior
