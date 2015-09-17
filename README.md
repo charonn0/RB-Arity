@@ -6,6 +6,7 @@ A **proof-of-concept** dynamic delegate invoker for Realbasic and Xojo.
 * Invoke external functions with a variable number of arguments.
 
 ##Limitations and caveats
+* Windows only. (Other targets probably doable, but not implemented.)
 * External functions may receive 0-6 arguments. Passing more than 6 arguments will raise an exception.
 * Argument and return values must be convertable to Ptrs 
 * No typechecking
