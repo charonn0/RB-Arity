@@ -9,6 +9,7 @@ Module=DynamicInvoke;DynamicInvoke/DynamicInvoke.rbbas;&h6A88D7FF;&h0;false
 Class=Library;DynamicInvoke/Library.rbbas;&h65E9EFFF;&h6A88D7FF;false
 Class=TooManyArgumentsException;DynamicInvoke/TooManyArgumentsException.rbbas;&h2E3257FF;&h6A88D7FF;false
 Class=Invoker;DynamicInvoke/Invoker.rbbas;&h131AAFFF;&h6A88D7FF;false
+Class=LibraryNotFoundException;DynamicInvoke/LibraryNotFoundException.rbbas;&h4560AFFF;&h6A88D7FF;false
 DefaultWindow=Window1
 AppMenuBar=MenuBar1
 MajorVersion=1

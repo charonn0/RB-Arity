@@ -77,7 +77,7 @@ Protected Module DynamicInvoke
 		  Dim Procedure As DynamicInvoke.Invoker = Procedures.Lookup(LibName + Str(Ordinal), Nil)
 		  If Procedure = Nil Then
 		    Dim hModule As DynamicInvoke.Library = Library.LoadLibrary(LibName)
-		    If hModule = Nil Then Return Nil
+		    If hModule = Nil Then Raise New LibraryNotFoundException(LibName)
 		    Dim proc As Ptr = GetProcAddress_(hModule.ModuleID, Ptr(Ordinal))
 		    If proc <> Nil Then
 		      Procedure = New DynamicInvoke.Invoker(proc, Str(Ordinal), hModule)
@@ -97,7 +97,7 @@ Protected Module DynamicInvoke
 		  Dim Procedure As DynamicInvoke.Invoker = Procedures.Lookup(LibName + ProcName, Nil)
 		  If Procedure = Nil Then
 		    Dim hModule As DynamicInvoke.Library = Library.LoadLibrary(LibName)
-		    If hModule = Nil Then Return Nil
+		    If hModule = Nil Then Raise New LibraryNotFoundException(LibName)
 		    Dim procn As New MemoryBlock(ProcName.Len + 1)
 		    procn.CString(0) = ProcName
 		    Dim proc As Ptr = GetProcAddress_(hModule.ModuleID, Procn)
@@ -116,13 +116,21 @@ Protected Module DynamicInvoke
 
 	#tag Method, Flags = &h1
 		Protected Function IsFunctionAvailable(LibName As String, ProcName As String) As Boolean
-		  Return GetProcAddress(LibName, ProcName) <> Nil
+		  Try
+		    Return GetProcAddress(LibName, ProcName) <> Nil
+		  Catch
+		    Return False
+		  End Try
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function IsOrdinalAvailable(LibName As String, Ordinal As Integer) As Boolean
-		  Return GetProcAddress(LibName, Ordinal) <> Nil
+		  Try
+		    Return GetProcAddress(LibName, Ordinal) <> Nil
+		  Catch
+		    Return False
+		  End Try
 		End Function
 	#tag EndMethod
 
