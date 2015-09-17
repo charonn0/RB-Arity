@@ -1,6 +1,15 @@
 # RB-Arity
 A **proof-of-concept** dynamic delegate invoker for Realbasic and Xojo. 
 
+##Example
+This example changes the titlebar caption on a window:
+```vbnet
+  Dim SetWindowText As DynamicInvoke.Invoker
+  SetWindowText = DynamicInvoke.GetProcAddress("User32", "SetWindowTextA")
+  Dim caption As CString = "Caption set!"
+  SetWindowText.Invoke(MyWindow.Handle, caption)
+```
+
 ##Features
 * Invoke external functions using library and function names that are decided upon at runtime instead of compile-time.
 * Invoke external functions with a variable number of arguments.
