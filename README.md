@@ -1,6 +1,8 @@
 # RB-Arity
 A **proof-of-concept** dynamic delegate invoker for Realbasic and Xojo. 
 
+```Arity(ærɨti): In logic, mathematics, and computer science, the arity of a function or operation is the number of arguments or operands the function or operation accepts. ```
+
 ##Example
 This example changes the titlebar caption on a window:
 ```vbnet
