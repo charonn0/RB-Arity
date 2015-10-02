@@ -118,10 +118,7 @@ End
 		  Const MB_ICONINFORMATION  = &h00000040
 		  Const MB_RETRYCANCEL = &h00000005
 		  
-		  Dim s1 As String = ConvertEncoding(MessageBox.ProcedureName, Encodings.UTF16)
-		  Dim s2 As String = ConvertEncoding(MessageBox.Library, Encodings.UTF16)
-		  
-		  Dim value As Integer = MessageBox.Invoke(Self.Handle, s1, s2, MB_ICONINFORMATION Or MB_RETRYCANCEL)
+		  Dim value As Integer = MessageBox.Invoke(Self.Handle, MessageBox.ProcedureName, MessageBox.Library, MB_ICONINFORMATION Or MB_RETRYCANCEL)
 		  If value = 4 Then
 		    MessageBox.Invoke(Self.Handle, "You clicked Retry!", "Retry!", MB_ICONINFORMATION)
 		  Else

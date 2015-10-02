@@ -109,7 +109,7 @@ Protected Class Invoker
 
 	#tag Method, Flags = &h0
 		Function Library() As String
-		  Return hModule.Name
+		  Return ConvertEncoding(hModule.Name, Encodings.UTF16)
 		End Function
 	#tag EndMethod
 
@@ -129,7 +129,7 @@ Protected Class Invoker
 
 	#tag Method, Flags = &h0
 		Function ProcedureName() As String
-		  Return mName
+		  Return ConvertEncoding(mName, Encodings.UTF16)
 		End Function
 	#tag EndMethod
 
