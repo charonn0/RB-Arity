@@ -15,7 +15,7 @@ Protected Class Invoker
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Proc As Ptr, ProcName As String, LibModule As DynamicInvoke.Library)
+		Sub Constructor(Proc As Ptr, ProcName As String, LibModule As Arity.Library)
 		  Procedure = Proc
 		  hModule = LibModule
 		  mName = ProcName
@@ -114,7 +114,7 @@ Protected Class Invoker
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(OtherInvoker As DynamicInvoke.Invoker) As Integer
+		Function Operator_Compare(OtherInvoker As Arity.Invoker) As Integer
 		  If OtherInvoker Is Nil Then Return 1
 		  If Me.hModule <> OtherInvoker.hModule Then Return 1
 		  Return Sign(Integer(Procedure) - Integer(OtherInvoker.Procedure))
@@ -135,7 +135,7 @@ Protected Class Invoker
 
 
 	#tag Property, Flags = &h1
-		Protected hModule As DynamicInvoke.Library
+		Protected hModule As Arity.Library
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

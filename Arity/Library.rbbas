@@ -25,7 +25,7 @@ Protected Class Library
 		  #endif
 		  If Modules = Nil Then Return False
 		  Dim hModule As Integer = Modules.Lookup(LibName, 0)
-		  If hModule <> 0 And DynamicInvoke.FreeLibrary(hModule) Then
+		  If hModule <> 0 And Arity.FreeLibrary(hModule) Then
 		    Modules.Remove(LibName)
 		    Return True
 		  End If
@@ -33,7 +33,7 @@ Protected Class Library
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		 Shared Function LoadLibrary(LibName As String) As DynamicInvoke.Library
+		 Shared Function LoadLibrary(LibName As String) As Arity.Library
 		  ' Returns a reference to the library. If the library cannot be loaded then this function returns Nil
 		  #If Not TargetWin32 Then
 		    Raise New PlatformNotSupportedException
@@ -41,7 +41,7 @@ Protected Class Library
 		  If Modules = Nil Then Modules = New Dictionary
 		  If Modules.HasKey(LibName) Then Return Modules.Value(LibName)
 		  Dim h As Integer = GetModuleHandleW(LibName)
-		  Dim hMod As DynamicInvoke.Library
+		  Dim hMod As Arity.Library
 		  If h = 0 Then h = LoadLibraryW(LibName)
 		  If h = 0 Then Return Nil
 		  hMod = New Library(h, LibName)
@@ -57,7 +57,7 @@ Protected Class Library
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(OtherLib As DynamicInvoke.Library) As Integer
+		Function Operator_Compare(OtherLib As Arity.Library) As Integer
 		  If OtherLib Is Nil Then Return 1
 		  Return Sign(Me.hModule - OtherLib.hModule)
 		End Function

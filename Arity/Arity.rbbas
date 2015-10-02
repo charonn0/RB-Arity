@@ -1,5 +1,5 @@
 #tag Module
-Protected Module DynamicInvoke
+Protected Module Arity
 	#tag DelegateDeclaration, Flags = &h21
 		Private Delegate Function ArityF0() As Ptr
 	#tag EndDelegateDeclaration
@@ -69,18 +69,18 @@ Protected Module DynamicInvoke
 	#tag EndExternalMethod
 
 	#tag Method, Flags = &h1
-		Protected Function GetProcAddress(LibName As String, Ordinal As Integer) As DynamicInvoke.Invoker
+		Protected Function GetProcAddress(LibName As String, Ordinal As Integer) As Arity.Invoker
 		  #If Not TargetWin32 Then
 		    Raise New PlatformNotSupportedException
 		  #endif
 		  If Procedures = Nil Then Procedures = New Dictionary
-		  Dim Procedure As DynamicInvoke.Invoker = Procedures.Lookup(LibName + Str(Ordinal), Nil)
+		  Dim Procedure As Arity.Invoker = Procedures.Lookup(LibName + Str(Ordinal), Nil)
 		  If Procedure = Nil Then
-		    Dim hModule As DynamicInvoke.Library = Library.LoadLibrary(LibName)
+		    Dim hModule As Arity.Library = Library.LoadLibrary(LibName)
 		    If hModule = Nil Then Raise New LibraryNotFoundException(LibName)
 		    Dim proc As Ptr = GetProcAddress_(hModule.ModuleID, Ptr(Ordinal))
 		    If proc <> Nil Then
-		      Procedure = New DynamicInvoke.Invoker(proc, Str(Ordinal), hModule)
+		      Procedure = New Arity.Invoker(proc, Str(Ordinal), hModule)
 		      Procedures.Value(LibName + Str(Ordinal)) = Procedure
 		    End If
 		  End If
@@ -89,20 +89,20 @@ Protected Module DynamicInvoke
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function GetProcAddress(LibName As String, ProcName As String) As DynamicInvoke.Invoker
+		Protected Function GetProcAddress(LibName As String, ProcName As String) As Arity.Invoker
 		  #If Not TargetWin32 Then
 		    Raise New PlatformNotSupportedException
 		  #endif
 		  If Procedures = Nil Then Procedures = New Dictionary
-		  Dim Procedure As DynamicInvoke.Invoker = Procedures.Lookup(LibName + ProcName, Nil)
+		  Dim Procedure As Arity.Invoker = Procedures.Lookup(LibName + ProcName, Nil)
 		  If Procedure = Nil Then
-		    Dim hModule As DynamicInvoke.Library = Library.LoadLibrary(LibName)
+		    Dim hModule As Arity.Library = Library.LoadLibrary(LibName)
 		    If hModule = Nil Then Raise New LibraryNotFoundException(LibName)
 		    Dim procn As New MemoryBlock(ProcName.Len + 1)
 		    procn.CString(0) = ProcName
 		    Dim proc As Ptr = GetProcAddress_(hModule.ModuleID, Procn)
 		    If proc <> Nil Then
-		      Procedure = New DynamicInvoke.Invoker(proc, ProcName, hModule)
+		      Procedure = New Arity.Invoker(proc, ProcName, hModule)
 		      Procedures.Value(LibName + ProcName) = Procedure
 		    End If
 		  End If

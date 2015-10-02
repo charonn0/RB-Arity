@@ -92,11 +92,11 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  'If DynamicInvoke.IsFunctionAvailable("libcurl", "curl_global_init") Then
-		  'Dim GetLastError As DynamicInvoke.Invoker = DynamicInvoke.GetProcAddress("Kernel32", "GetLastError")
+		  'If Arity.IsFunctionAvailable("libcurl", "curl_global_init") Then
+		  'Dim GetLastError As Arity.Invoker = Arity.GetProcAddress("Kernel32", "GetLastError")
 		  'Dim err As Integer
-		  'If DynamicInvoke.IsOrdinalAvailable("libcurl", 21) Then
-		  'Dim curl_global_init As DynamicInvoke.Invoker = DynamicInvoke.GetProcAddress("libcurl", 21)
+		  'If Arity.IsOrdinalAvailable("libcurl", 21) Then
+		  'Dim curl_global_init As Arity.Invoker = Arity.GetProcAddress("libcurl", 21)
 		  'curl_global_init.Invoke(3)
 		  'Break
 		  '
@@ -114,7 +114,7 @@ End
 #tag Events PushButton1
 	#tag Event
 		Sub Action()
-		  Dim MessageBox As DynamicInvoke.Invoker = DynamicInvoke.GetProcAddress("User32", "MessageBoxW")
+		  Dim MessageBox As Arity.Invoker = Arity.GetProcAddress("User32", "MessageBoxW")
 		  Const MB_ICONINFORMATION  = &h00000040
 		  Const MB_RETRYCANCEL = &h00000005
 		  
@@ -134,7 +134,7 @@ End
 #tag Events PushButton2
 	#tag Event
 		Sub Action()
-		  Dim SetWindowText As DynamicInvoke.Invoker = DynamicInvoke.GetProcAddress("User32", "SetWindowTextA")
+		  Dim SetWindowText As Arity.Invoker = Arity.GetProcAddress("User32", "SetWindowTextA")
 		  Dim caption As CString = "Caption set!"
 		  SetWindowText.Invoke(Self.Handle, caption)
 		  
