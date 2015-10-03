@@ -59,7 +59,7 @@ Protected Class Invoker
 		    Dim proc As New ArityS6(Procedure)
 		    proc.Invoke(pArgs(0), pArgs(1), pArgs(2), pArgs(3), pArgs(4), pArgs(5))
 		  Else
-		    Raise New TooManyArgumentsException
+		    Raise New TooManyArgumentsException(Ubound(Args) + 1)
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -102,7 +102,7 @@ Protected Class Invoker
 		    Return proc.Invoke(pArgs(0), pArgs(1), pArgs(2), pArgs(3), pArgs(4), pArgs(5))
 		    
 		  Else
-		    Raise New TooManyArgumentsException
+		    Raise New TooManyArgumentsException(Ubound(Args) + 1)
 		  End Select
 		End Function
 	#tag EndMethod
