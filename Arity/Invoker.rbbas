@@ -108,8 +108,8 @@ Protected Class Invoker
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Library() As String
-		  Return ConvertEncoding(hModule.Name, Encodings.UTF16)
+		Function Library() As Arity.Library
+		  Return hModule
 		End Function
 	#tag EndMethod
 
