@@ -194,7 +194,7 @@ Protected Module Arity
 	#tag EndMethod
 
 	#tag ExternalMethod, Flags = &h21
-		Private Soft Declare Function SetDllDirectoryW Lib "Kernel32" (PathName As Ptr) As Boolean
+		Private Soft Declare Function SetDllDirectoryW Lib "Kernel32" (PathName As WString) As Boolean
 	#tag EndExternalMethod
 
 
