@@ -2,8 +2,9 @@
 Protected Class TooManyArgumentsException
 Inherits RuntimeException
 	#tag Method, Flags = &h1000
-		Sub Constructor()
+		Sub Constructor(ArgumentCount As Integer)
 		  Me.Message = "An Invoker was provided with too many arguments."
+		  Me.ErrorNumber = ArgumentCount
 		End Sub
 	#tag EndMethod
 
