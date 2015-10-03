@@ -173,6 +173,22 @@ Protected Module DynamicInvoke
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function SetDLLDirectory(DLLDirectory As FolderItem) As Boolean
+		  If DLLDirectory = Nil Then
+		    Return SetDllDirectoryW(Nil)
+		    
+		  ElseIf DLLDirectory.Directory And DLLDirectory.Exists Then
+		    Return SetDllDirectoryW(DLLDirectory.AbsolutePath)
+		    
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag ExternalMethod, Flags = &h21
+		Private Soft Declare Function SetDllDirectoryW Lib "Kernel32" (PathName As Ptr) As Boolean
+	#tag EndExternalMethod
+
 
 	#tag Property, Flags = &h21
 		Private Procedures As Dictionary
